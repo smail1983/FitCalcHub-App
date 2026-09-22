@@ -91,7 +91,7 @@ class CalcPage extends StatefulWidget{
 class _CalcPageState extends State<CalcPage>{
  final Map<String,TextEditingController> c={};
  String sex='male',activity='1.2',result='';
- @override void initState(){super.initState(); for(final k in ['age','weight','height','neck','waist','hip'])c[k]=TextEditingController();}
+ @override void initState(){super.initState(); for(final k in ['age','weight','height','weightKg','heightCm','neck','waist','hip'])c[k]=TextEditingController();}
  @override void dispose(){for(final x in c.values)x.dispose();super.dispose();}
  double n(String k)=>double.tryParse(c[k]!.text.trim())??0;
  void save(){if(result.isEmpty)return; final old=widget.prefs.getStringList('results')??[]; old.insert(0,'${calcName(widget.calc)}: $result'); if(old.length>30)old.removeLast(); widget.prefs.setStringList('results',old); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Result saved')));}
