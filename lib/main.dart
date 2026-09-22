@@ -132,20 +132,136 @@ class _CalcPageState extends State<CalcPage>{
  Widget _field(String k){final units={'weight':'Weight (lb)','height':'Height (in)','age':'Age','neck':'Neck (cm)','waist':'Waist (cm)','hip':'Hip (cm)'};return TextField(controller:c[k],keyboardType:TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:units[k],border:const OutlineInputBorder()));}
 }
 
-class MealPage extends StatefulWidget{final SharedPreferences prefs; const MealPage({super.key,required this.prefs}); @override State<MealPage> createState()=>_MealPageState();}
-class _MealPageState extends State<MealPage>{final rows=<Map<String,TextEditingController>>[]; @override void initState(){super.initState();addRow();}
-void addRow(){setState(()=>rows.add({for(final k in ['food','qty','cal','pro','carb','fat'])k:TextEditingController(text:k=='qty'?'1':'' )}));}
-void remove(int i){for(final x in rows[i].values)x.dispose();setState(()=>rows.removeAt(i));}
-@override void dispose(){for(final r in rows)for(final x in r.values)x.dispose();super.dispose();}
-double sum(String k)=>rows.fold(0.0,(s,r)=>s+(double.tryParse(r[k]!.text)??0.0)*(double.tryParse(r['qty']!.text)??0.0));
-@override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Meal Calorie Calculator')),body:ListView(padding:const EdgeInsets.all(16),children:[
-for(int i=0;i<rows.length;i++)Card(child:Padding(padding:const EdgeInsets.all(12),child:Column(children:[
-Row(children:[Expanded(child:TextField(controller:rows[i]['food'],decoration:const InputDecoration(labelText:'Food'))),IconButton(onPressed:()=>remove(i),icon:const Icon(Icons.delete_outline))]),
-Row(children:[Expanded(child:_f(rows[i]['qty']!,'Qty')),Expanded(child:_f(rows[i]['cal']!,'Calories')),]),Row(children:[Expanded(child:_f(rows[i]['pro']!,'Protein g')),Expanded(child:_f(rows[i]['carb']!,'Carbs g')),Expanded(child:_f(rows[i]['fat']!,'Fat g'))])]))),
-OutlinedButton.icon(onPressed:addRow,icon:const Icon(Icons.add),label:const Text('Add Food')),
-const SizedBox(height:12),Card(child:Padding(padding:const EdgeInsets.all(18),child:Text('Calories: ${sum('cal').toStringAsFixed(1)} kcal\nProtein: ${sum('pro').toStringAsFixed(1)} g\nCarbs: ${sum('carb').toStringAsFixed(1)} g\nFat: ${sum('fat').toStringAsFixed(1)} g',style:Theme.of(context).textTheme.titleMedium))),
-]));}
-Widget _f(TextEditingController x,String label)=>Padding(padding:const EdgeInsets.all(4),child:TextField(controller:x,onChanged:(_)=>setState((){}),keyboardType:const TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:label,border:const OutlineInputBorder())));
+class MealPage extends StatefulWidget {
+  final SharedPreferences prefs;
+  const MealPage({super.key, required this.prefs});
+  @override State<MealPage> createState() => _MealPageState();
+}
+
+class _MealPageState extends State<MealPage> {
+  final rows = <Map<String, TextEditingController>>[];
+
+  @override
+  void initState() {
+    super.initState();
+    addRow();
+  }
+
+  void addRow() {
+    setState(() {
+      rows.add({
+        for (final k in ['food','qty','cal','pro','carb','fat'])
+          k: TextEditingController(text: k == 'qty' ? '1' : ''),
+      });
+    });
+  }
+
+  void remove(int i) {
+    for (final x in rows[i].values) {
+      x.dispose();
+    }
+    setState(() => rows.removeAt(i));
+  }
+
+  double sum(String key) {
+    double total = 0;
+    for (final row in rows) {
+      final value = double.tryParse(row[key]!.text) ?? 0;
+      final qty = double.tryParse(row['qty']!.text) ?? 0;
+      total += value * qty;
+    }
+    return total;
+  }
+
+  @override
+  void dispose() {
+    for (final row in rows) {
+      for (final controller in row.values) {
+        controller.dispose();
+      }
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Meal Calorie Calculator')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          for (int i = 0; i < rows.length; i++)
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(child: TextField(
+                          controller: rows[i]['food'],
+                          decoration: const InputDecoration(labelText: 'Food'),
+                        )),
+                        IconButton(
+                          onPressed: () => remove(i),
+                          icon: const Icon(Icons.delete_outline),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(child: _field(rows[i]['qty']!, 'Qty')),
+                        Expanded(child: _field(rows[i]['cal']!, 'Calories')),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(child: _field(rows[i]['pro']!, 'Protein g')),
+                        Expanded(child: _field(rows[i]['carb']!, 'Carbs g')),
+                        Expanded(child: _field(rows[i]['fat']!, 'Fat g')),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          OutlinedButton.icon(
+            onPressed: addRow,
+            icon: const Icon(Icons.add),
+            label: const Text('Add Food'),
+          ),
+          const SizedBox(height: 12),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(18),
+              child: Text(
+                'Calories: ${sum('cal').toStringAsFixed(1)} kcal\n'
+                'Protein: ${sum('pro').toStringAsFixed(1)} g\n'
+                'Carbs: ${sum('carb').toStringAsFixed(1)} g\n'
+                'Fat: ${sum('fat').toStringAsFixed(1)} g',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _field(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.all(4),
+      child: TextField(
+        controller: controller,
+        onChanged: (_) => setState(() {}),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
 }
 
 class SavedPage extends StatelessWidget{final SharedPreferences prefs;const SavedPage({super.key,required this.prefs});@override Widget build(BuildContext context){final r=prefs.getStringList('results')??[];return SafeArea(child:ListView(padding:const EdgeInsets.all(20),children:[Text('Saved Results',style:Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight:FontWeight.bold)),const SizedBox(height:12),if(r.isEmpty)const Text('No saved results yet.') else for(final x in r)Card(child:ListTile(leading:const Icon(Icons.bookmark),title:Text(x)))]));}}
