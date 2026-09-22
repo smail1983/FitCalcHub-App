@@ -37,7 +37,7 @@ class _MainShellState extends State<MainShell>{
   int index=0;
   @override Widget build(BuildContext context){
     final pages=[
-      HomePage(onOpen:(c)=>Navigator.push(context,MaterialPageRoute(builder:(_)=>c==Calc.meal?MealPage(prefs:widget.prefs):CalcPage(calc:c,prefs:widget.prefs))),
+      HomePage(onOpen:(c)=>Navigator.push(context,MaterialPageRoute(builder:(_)=>c==Calc.meal?MealPage(prefs:widget.prefs):CalcPage(calc:c,prefs:widget.prefs)))),
       CalculatorList(prefs:widget.prefs),
       SavedPage(prefs:widget.prefs),
       SettingsPage(prefs:widget.prefs,dark:widget.dark,onDark:widget.onDark),
