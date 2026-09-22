@@ -97,17 +97,18 @@ class _CalcPageState extends State<CalcPage>{
  void save(){if(result.isEmpty)return; final old=widget.prefs.getStringList('results')??[]; old.insert(0,'${calcName(widget.calc)}: $result'); if(old.length>30)old.removeLast(); widget.prefs.setStringList('results',old); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content:Text('Result saved')));}
  void calculate(){
    final age=n('age'),w=n('weight'),h=n('height');
+   final bmiWeight=n('weightKg'), bmiHeight=n('heightCm');
    String r='';
    if(widget.calc==Calc.bmi){
-     if(w<=0||h<=0){r='Please enter valid weight and height.';} else {final bmi=w/((h/100)*(h/100)); final cat=bmi<18.5?'Underweight':bmi<25?'Normal range':bmi<30?'Overweight':'Obesity'; r='${bmi.toStringAsFixed(1)} — $cat';}
+     if(bmiWeight<=0||bmiHeight<=0){r='Please enter valid weight and height.';} else {final bmi=bmiWeight/((bmiHeight/100)*(bmiHeight/100)); final cat=bmi<18.5?'Underweight':bmi<25?'Normal range':bmi<30?'Overweight':'Obesity'; r='${bmi.toStringAsFixed(1)} — $cat';}
    } else if(widget.calc==Calc.bmr || widget.calc==Calc.tdee || widget.calc==Calc.deficit){
      if(age<18||w<=0||h<=0){r='Please enter valid adult age, weight and height.';} else {
-       final kg=w/2.20462,cm=h*2.54,bmr=sex=='male'?10*kg+6.25*cm-5*age+5:10*kg+6.25*cm-5*age-161;
+       final kg=(widget.calc==Calc.bmr? w/2.20462 : bmiWeight),cm=(widget.calc==Calc.bmr? h*2.54 : bmiHeight),bmr=sex=='male'?10*kg+6.25*cm-5*age+5:10*kg+6.25*cm-5*age-161;
        if(widget.calc==Calc.bmr) r='${bmr.round()} kcal/day estimated BMR';
        else {final t=bmr*double.parse(activity); if(widget.calc==Calc.tdee) r='${t.round()} kcal/day estimated TDEE'; else {final low=(t-500).round()<1200?1200:(t-500).round(); final high=(t-300).round()<1200?1200:(t-300).round(); r='Maintenance: ${t.round()} kcal/day\nExample deficit range: $low–$high kcal/day';}}
      }
    } else if(widget.calc==Calc.bodyFat){
-     final hh=n('height'), neck=n('neck'), waist=n('waist'), hip=n('hip'), female=sex=='female';
+     final hh=n('heightCm'), neck=n('neck'), waist=n('waist'), hip=n('hip'), female=sex=='female';
      if(hh<=0||neck<=0||waist<=0||(female&&hip<=0)) r='Please enter valid measurements.';
      else {final x=female?waist+hip-neck:waist-neck; if(x<=0) r='Please check your measurements.'; else {final bf=female?495/(1.29579-0.35004*log10(x)+0.221*log10(hh))-450:495/(1.0324-0.19077*log10(x)+0.15456*log10(hh))-450; r='${bf.toStringAsFixed(1)}% estimated body fat';}}
    }
@@ -115,8 +116,8 @@ class _CalcPageState extends State<CalcPage>{
  }
  @override Widget build(BuildContext context){
    final labels=switch(widget.calc){
-     Calc.bmi=>['weight','height'], Calc.bmr=>['age','weight','height'], Calc.tdee=>['age','weight','height'],
-     Calc.deficit=>['age','weight','height'], Calc.bodyFat=>['height','neck','waist','hip'], Calc.meal=>[]
+     Calc.bmi=>['weightKg','heightCm'], Calc.bmr=>['age','weight','height'], Calc.tdee=>['age','weightKg','heightCm'],
+     Calc.deficit=>['age','weightKg','heightCm'], Calc.bodyFat=>['heightCm','neck','waist','hip'], Calc.meal=>[]
    };
    return Scaffold(appBar:AppBar(title:Text(calcName(widget.calc))),body:ListView(padding:const EdgeInsets.all(20),children:[
      if(widget.calc!=Calc.bmi)DropdownButtonFormField<String>(value:sex,decoration:const InputDecoration(labelText:'Sex',border:OutlineInputBorder()),items:const[DropdownMenuItem(value:'male',child:Text('Male')),DropdownMenuItem(value:'female',child:Text('Female'))],onChanged:(v)=>setState(()=>sex=v!)),
@@ -129,7 +130,7 @@ class _CalcPageState extends State<CalcPage>{
      const SizedBox(height:18),const Text('For informational purposes only. This calculator does not provide medical advice.')
    ]));
  }
- Widget _field(String k){final units={'weight':'Weight (lb)','height':'Height (in)','age':'Age','neck':'Neck (cm)','waist':'Waist (cm)','hip':'Hip (cm)'};return TextField(controller:c[k],keyboardType:TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:units[k],border:const OutlineInputBorder()));}
+ Widget _field(String k){final units={'weight':'Weight (lb)','height':'Height (in)','weightKg':'Weight (kg)','heightCm':'Height (cm)','age':'Age','neck':'Neck (cm)','waist':'Waist (cm)','hip':'Hip (cm)'};return TextField(controller:c[k],keyboardType:TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:units[k],border:const OutlineInputBorder()));}
 }
 
 class MealPage extends StatefulWidget {
