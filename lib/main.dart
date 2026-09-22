@@ -137,7 +137,7 @@ class _MealPageState extends State<MealPage>{final rows=<Map<String,TextEditingC
 void addRow(){setState(()=>rows.add({for(final k in ['food','qty','cal','pro','carb','fat'])k:TextEditingController(text:k=='qty'?'1':'' )}));}
 void remove(int i){for(final x in rows[i].values)x.dispose();setState(()=>rows.removeAt(i));}
 @override void dispose(){for(final r in rows)for(final x in r.values)x.dispose();super.dispose();}
-double sum(String k)=>rows.fold(0,(s,r)=>s+(double.tryParse(r[k]!.text)||0)*(double.tryParse(r['qty']!.text)||0));
+double sum(String k)=>rows.fold(0.0,(s,r)=>s+(double.tryParse(r[k]!.text)??0.0)*(double.tryParse(r['qty']!.text)??0.0));
 @override Widget build(BuildContext context)=>Scaffold(appBar:AppBar(title:const Text('Meal Calorie Calculator')),body:ListView(padding:const EdgeInsets.all(16),children:[
 for(int i=0;i<rows.length;i++)Card(child:Padding(padding:const EdgeInsets.all(12),child:Column(children:[
 Row(children:[Expanded(child:TextField(controller:rows[i]['food'],decoration:const InputDecoration(labelText:'Food'))),IconButton(onPressed:()=>remove(i),icon:const Icon(Icons.delete_outline))]),
