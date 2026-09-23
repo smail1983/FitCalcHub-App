@@ -28,6 +28,36 @@ class _FitCalcHubAppState extends State<FitCalcHubApp> {
   );
 }
 
+class AppBackground extends StatelessWidget {
+  final Widget child;
+  final bool dark;
+  const AppBackground({super.key, required this.child, required this.dark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Positioned.fill(
+          child: Image.asset(
+            'assets/fitcalchub-hero.svg',
+            fit: BoxFit.cover,
+            opacity: const AlwaysStoppedAnimation(.42),
+          ),
+        ),
+        Positioned.fill(
+          child: Container(
+            color: dark
+                ? Colors.black.withOpacity(.50)
+                : Colors.white.withOpacity(.32),
+          ),
+        ),
+        child,
+      ],
+    );
+  }
+}
+
 class MainShell extends StatefulWidget {
   final SharedPreferences prefs; final bool dark; final ValueChanged<bool> onDark;
   const MainShell({super.key,required this.prefs,required this.dark,required this.onDark});
@@ -42,7 +72,7 @@ class _MainShellState extends State<MainShell>{
       SavedPage(prefs:widget.prefs),
       SettingsPage(prefs:widget.prefs,dark:widget.dark,onDark:widget.onDark),
     ];
-    return Scaffold(body:Stack(children:[Positioned.fill(child:Image.asset('assets/fitcalchub-hero.svg',fit:BoxFit.cover,opacity:const AlwaysStoppedAnimation(.14))),Positioned.fill(child:Container(color:Colors.white.withOpacity(widget.dark?.04:.76))),pages[index]]),bottomNavigationBar:NavigationBar(selectedIndex:index,onDestinationSelected:(i)=>setState(()=>index=i),destinations:const[
+    return Scaffold(body:AppBackground(dark:widget.dark,child:pages[index]),bottomNavigationBar:NavigationBar(selectedIndex:index,onDestinationSelected:(i)=>setState(()=>index=i),destinations:const[
       NavigationDestination(icon:Icon(Icons.home_outlined),selectedIcon:Icon(Icons.home),label:'Home'),
       NavigationDestination(icon:Icon(Icons.calculate_outlined),selectedIcon:Icon(Icons.calculate),label:'Calculators'),
       NavigationDestination(icon:Icon(Icons.bookmark_border),selectedIcon:Icon(Icons.bookmark),label:'Saved'),
@@ -119,7 +149,7 @@ class _CalcPageState extends State<CalcPage>{
      Calc.bmi=>['weightKg','heightCm'], Calc.bmr=>['age','weight','height'], Calc.tdee=>['age','weightKg','heightCm'],
      Calc.deficit=>['age','weightKg','heightCm'], Calc.bodyFat=>['heightCm','neck','waist','hip'], Calc.meal=>[]
    };
-   return Scaffold(appBar:AppBar(title:Text(calcName(widget.calc))),body:ListView(padding:const EdgeInsets.all(20),children:[
+   return Scaffold(appBar:AppBar(title:Text(calcName(widget.calc))),body:AppBackground(dark:Theme.of(context).brightness==Brightness.dark,child:ListView(padding:const EdgeInsets.all(20),children:[
      if(widget.calc!=Calc.bmi)DropdownButtonFormField<String>(value:sex,decoration:const InputDecoration(labelText:'Sex',border:OutlineInputBorder()),items:const[DropdownMenuItem(value:'male',child:Text('Male')),DropdownMenuItem(value:'female',child:Text('Female'))],onChanged:(v)=>setState(()=>sex=v!)),
      if(widget.calc!=Calc.bmi)const SizedBox(height:12),
      for(final k in labels)...[_field(k),const SizedBox(height:12)],
@@ -128,7 +158,7 @@ class _CalcPageState extends State<CalcPage>{
      FilledButton(onPressed:calculate,child:const Text('Calculate')),
      if(result.isNotEmpty)...[const SizedBox(height:16),Card(color:Theme.of(context).colorScheme.primaryContainer,child:Padding(padding:const EdgeInsets.all(18),child:Text(result,style:Theme.of(context).textTheme.titleMedium))),const SizedBox(height:10),OutlinedButton.icon(onPressed:save,icon:const Icon(Icons.bookmark_add),label:const Text('Save result'))],
      const SizedBox(height:18),const Text('For informational purposes only. This calculator does not provide medical advice.')
-   ]));
+   ])));
  }
  Widget _field(String k){final units={'weight':'Weight (lb)','height':'Height (in)','weightKg':'Weight (kg)','heightCm':'Height (cm)','age':'Age','neck':'Neck (cm)','waist':'Waist (cm)','hip':'Hip (cm)'};return TextField(controller:c[k],keyboardType:TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:units[k],border:const OutlineInputBorder()));}
 }
@@ -188,7 +218,9 @@ class _MealPageState extends State<MealPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Meal Calorie Calculator')),
-      body: ListView(
+      body: AppBackground(
+        dark: Theme.of(context).brightness == Brightness.dark,
+        child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           for (int i = 0; i < rows.length; i++)
@@ -245,6 +277,7 @@ class _MealPageState extends State<MealPage> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
