@@ -42,7 +42,7 @@ class _MainShellState extends State<MainShell>{
       SavedPage(prefs:widget.prefs),
       SettingsPage(prefs:widget.prefs,dark:widget.dark,onDark:widget.onDark),
     ];
-    return Scaffold(body:pages[index],bottomNavigationBar:NavigationBar(selectedIndex:index,onDestinationSelected:(i)=>setState(()=>index=i),destinations:const[
+    return Scaffold(body:Stack(children:[Positioned.fill(child:Image.asset('assets/fitcalchub-hero.svg',fit:BoxFit.cover,opacity:const AlwaysStoppedAnimation(.14))),Positioned.fill(child:Container(color:Colors.white.withOpacity(widget.dark?.04:.76))),pages[index]]),bottomNavigationBar:NavigationBar(selectedIndex:index,onDestinationSelected:(i)=>setState(()=>index=i),destinations:const[
       NavigationDestination(icon:Icon(Icons.home_outlined),selectedIcon:Icon(Icons.home),label:'Home'),
       NavigationDestination(icon:Icon(Icons.calculate_outlined),selectedIcon:Icon(Icons.calculate),label:'Calculators'),
       NavigationDestination(icon:Icon(Icons.bookmark_border),selectedIcon:Icon(Icons.bookmark),label:'Saved'),
