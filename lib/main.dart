@@ -47,7 +47,7 @@ class _FitCalcHubAppState extends State<FitCalcHubApp> {
       elevation: 0,
       centerTitle: false,
     ),
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: const BorderSide(color: line)),
@@ -487,7 +487,8 @@ class ArticlesPage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 14),
             child: ArticleCard(article: article),
           )),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -807,7 +808,7 @@ class _MealPageState extends State<MealPage>{
       'Calories: ${sum('cal').toStringAsFixed(1)} kcal\nProtein: ${sum('pro').toStringAsFixed(1)} g\nCarbs: ${sum('carb').toStringAsFixed(1)} g\nFat: ${sum('fat').toStringAsFixed(1)} g',
       style:const TextStyle(fontSize:17,fontWeight:FontWeight.w800,height:1.6),
     )),
-  ]);
+  ]));
   Widget _field(TextEditingController controller,String label)=>Padding(padding:const EdgeInsets.all(4),child:TextField(controller:controller,onChanged:(_)=>setState((){}),keyboardType:const TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:label)));
 }
 
