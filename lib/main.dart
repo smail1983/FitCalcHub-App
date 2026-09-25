@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -356,7 +357,7 @@ class _CalcPageState extends State<CalcPage> {
     setState(()=>result=r);
   }
 
-  double log10(double x) => Math.log(x) / Math.ln10;
+  double log10(double x) => math.log(x) / math.ln10;
 
   @override Widget build(BuildContext context) {
     final labels=switch(widget.calc){
