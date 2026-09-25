@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const green = Color(0xFF08A957);
@@ -213,22 +214,66 @@ class HomePage extends StatelessWidget {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 28),
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
-            child: const Brand(),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 25, 20, 0),
-            child: Text(
-              'Simple, free health & fitness calculators.',
-              style: TextStyle(
-                color: dark ? const Color(0xFFCBD5DE) : const Color(0xFF334155),
-                fontSize: 17,
-                height: 1.35,
-              ),
+          // Website-style visual hero background.
+          SizedBox(
+            height: 250,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(32),
+                    bottomRight: Radius.circular(32),
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/fitcalchub-hero.svg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withOpacity(.12),
+                        Colors.black.withOpacity(.52),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 28, 20, 26),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Text(
+                        'FitCalcHub',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 31,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -1.1,
+                        ),
+                      ),
+                      const SizedBox(height: 7),
+                      const Text(
+                        'Simple, free health & fitness calculators.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          height: 1.35,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 22),
 
           // Popular calculators — intentionally simple like the website's mobile layout.
           Container(
@@ -291,20 +336,43 @@ class HomePage extends StatelessWidget {
           const SizedBox(height: 30),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Latest articles', style: TextStyle(
-                  color: dark ? Colors.white : ink,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -0.5,
-                )),
-                TextButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ArticlesPage())),
-                  child: const Text('View all', style: TextStyle(color: green, fontWeight: FontWeight.w800)),
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(18, 18, 18, 10),
+              decoration: BoxDecoration(
+                color: dark ? const Color(0xFF132231) : const Color(0xFFEAF5EF),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: dark ? const Color(0xFF263847) : const Color(0xFFD6E6DD),
                 ),
-              ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Latest articles', style: TextStyle(
+                        color: dark ? Colors.white : ink,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      )),
+                      TextButton(
+                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ArticlesPage())),
+                        child: const Text('View all', style: TextStyle(color: green, fontWeight: FontWeight.w800)),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Helpful health, nutrition and fitness tips.',
+                    style: TextStyle(
+                      color: dark ? const Color(0xFFCBD5DE) : muted,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           ...appArticles.take(3).map((article) => Padding(
