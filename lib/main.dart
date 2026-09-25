@@ -47,7 +47,7 @@ class _FitCalcHubAppState extends State<FitCalcHubApp> {
       elevation: 0,
       centerTitle: false,
     ),
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22), side: const BorderSide(color: line)),
@@ -140,7 +140,7 @@ class _MainShellState extends State<MainShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: index,
         onDestinationSelected: (i) => setState(() => index = i),
-        indicatorColor: green.withValues(alpha: .13),
+        indicatorColor: green.withOpacity(.13),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home, color: green), label: 'Home'),
           NavigationDestination(icon: Icon(Icons.calculate_outlined), selectedIcon: Icon(Icons.calculate, color: green), label: 'Calculators'),
@@ -579,7 +579,7 @@ class ArticleDetailPage extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Colors.black.withValues(alpha: .45)],
+                      colors: [Colors.transparent, Colors.black.withOpacity(.45)],
                     ),
                   ),
                 ),
@@ -589,7 +589,7 @@ class ArticleDetailPage extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: .92),
+                      color: Colors.white.withOpacity(.92),
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Text(
@@ -746,14 +746,14 @@ class _CalcPageState extends State<CalcPage> {
         ),
         const SizedBox(height:18),
         if(widget.calc!=Calc.bmi) ...[
-          DropdownButtonFormField<String>(initialValue:sex,decoration:const InputDecoration(labelText:'Sex'),items:const[
+          DropdownButtonFormField<String>(value:sex,decoration:const InputDecoration(labelText:'Sex'),items:const[
             DropdownMenuItem(value:'male',child:Text('Male')),DropdownMenuItem(value:'female',child:Text('Female'))
           ],onChanged:(v)=>setState(()=>sex=v!)),
           const SizedBox(height:12),
         ],
         for(final k in labels)...[_field(k),const SizedBox(height:12)],
         if(widget.calc==Calc.tdee||widget.calc==Calc.deficit)...[
-          DropdownButtonFormField<String>(initialValue:activity,decoration:const InputDecoration(labelText:'Activity level'),items:const[
+          DropdownButtonFormField<String>(value:activity,decoration:const InputDecoration(labelText:'Activity level'),items:const[
             DropdownMenuItem(value:'1.2',child:Text('Sedentary')),DropdownMenuItem(value:'1.375',child:Text('Lightly active')),
             DropdownMenuItem(value:'1.55',child:Text('Moderately active')),DropdownMenuItem(value:'1.725',child:Text('Very active')),DropdownMenuItem(value:'1.9',child:Text('Extra active'))
           ],onChanged:(v)=>setState(()=>activity=v!)),const SizedBox(height:14)
