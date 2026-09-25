@@ -287,6 +287,30 @@ class HomePage extends StatelessWidget {
             title: 'Important',
             body: 'Results are estimates for informational use and are not medical advice.',
           ),
+
+          const SizedBox(height: 30),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Latest articles', style: TextStyle(
+                  color: dark ? Colors.white : ink,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.5,
+                )),
+                TextButton(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ArticlesPage())),
+                  child: const Text('View all', style: TextStyle(color: green, fontWeight: FontWeight.w800)),
+                ),
+              ],
+            ),
+          ),
+          ...appArticles.take(3).map((article) => Padding(
+            padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+            child: ArticleCard(article: article),
+          )),
         ],
       ),
     );
@@ -371,6 +395,168 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+
+class Article {
+  final String category;
+  final String title;
+  final String summary;
+  final String body;
+  final IconData icon;
+  const Article({required this.category, required this.title, required this.summary, required this.body, required this.icon});
+}
+
+const appArticles = <Article>[
+  Article(
+    category: 'Nutrition',
+    title: 'How Many Calories Should I Eat a Day?',
+    summary: 'Understand daily calorie needs and the factors that affect them.',
+    icon: Icons.restaurant_outlined,
+    body: 'Daily calorie needs vary from person to person. Age, body size, sex, activity level and goals all influence how much energy you may need.\\n\\nA useful starting point is to estimate your basal metabolic rate (BMR), then account for activity to estimate total daily energy expenditure (TDEE). These numbers are estimates, not exact measurements.\\n\\nUse the FitCalcHub BMR and TDEE calculators as a starting point, then consider your real-world progress and professional guidance when appropriate.',
+  ),
+  Article(
+    category: 'Fitness',
+    title: 'BMR vs TDEE: What Is the Difference?',
+    summary: 'Learn how these two calorie estimates are different and when they are useful.',
+    icon: Icons.local_fire_department_outlined,
+    body: 'BMR is an estimate of the energy your body uses at rest to support basic functions. TDEE is an estimate of your total daily energy expenditure after activity is included.\\n\\nBecause activity changes from day to day, TDEE is best viewed as an estimate rather than a fixed number. Understanding the difference can make calorie planning easier to interpret.\\n\\nFitCalcHub provides separate BMR and TDEE calculators so you can explore both estimates.',
+  ),
+  Article(
+    category: 'Nutrition',
+    title: 'How Much Protein Do I Need?',
+    summary: 'A practical guide to protein intake for everyday fitness goals.',
+    icon: Icons.egg_alt_outlined,
+    body: 'Protein is an important nutrient used to build and maintain body tissues. The amount a person needs depends on factors such as body size, age, activity and overall diet.\\n\\nFor active people, spreading protein-containing foods across meals can be a practical way to include it regularly. Foods such as eggs, dairy, fish, meat, beans and lentils can all contribute protein.\\n\\nIndividual needs can differ, so use general guidance as a starting point rather than a medical prescription.',
+  ),
+  Article(
+    category: 'Health',
+    title: 'Understanding BMI: What It Can and Cannot Tell You',
+    summary: 'Learn what BMI measures and why it should be interpreted with context.',
+    icon: Icons.monitor_weight_outlined,
+    body: 'Body Mass Index (BMI) is calculated from height and weight. It is commonly used as a screening measure, but it does not directly measure body fat or distinguish muscle from fat.\\n\\nFor that reason, BMI is most useful when considered alongside other information such as waist measurement, body composition, fitness and overall health.\\n\\nThe FitCalcHub BMI calculator provides an estimate for informational use and is not a diagnosis.',
+  ),
+];
+
+class ArticlesPage extends StatelessWidget {
+  const ArticlesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Articles')),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(14, 8, 14, 35),
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
+            decoration: BoxDecoration(
+              color: dark ? const Color(0xFF132231) : const Color(0xFFF0F7F3),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: dark ? const Color(0xFF263847) : const Color(0xFFDDE8E2)),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Learn & improve', style: TextStyle(color: green, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+                SizedBox(height: 6),
+                Text('Health & fitness articles', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900, letterSpacing: -0.7)),
+                SizedBox(height: 7),
+                Text('Practical information to help you understand your health, nutrition and fitness goals.', style: TextStyle(color: muted, height: 1.45)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
+          ...appArticles.map((article) => Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+            child: ArticleCard(article: article),
+          )),
+        ],
+      ),
+    );
+  }
+}
+
+class ArticleCard extends StatelessWidget {
+  final Article article;
+  const ArticleCard({super.key, required this.article});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(22),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ArticleDetailPage(article: article))),
+      child: Container(
+        padding: const EdgeInsets.all(17),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: line),
+          boxShadow: const [BoxShadow(color: Color(0x0B0F172A), blurRadius: 16, offset: Offset(0, 5))],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 58, height: 58,
+              decoration: BoxDecoration(color: const Color(0xFFE8F8EF), borderRadius: BorderRadius.circular(17)),
+              child: Icon(article.icon, color: green, size: 28),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(article.category.toUpperCase(), style: const TextStyle(color: green, fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1)),
+                const SizedBox(height: 5),
+                Text(article.title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, height: 1.2)),
+                const SizedBox(height: 6),
+                Text(article.summary, style: const TextStyle(color: muted, fontSize: 13, height: 1.4)),
+                const SizedBox(height: 9),
+                const Text('Read article →', style: TextStyle(color: green, fontWeight: FontWeight.w900, fontSize: 13)),
+              ]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ArticleDetailPage extends StatelessWidget {
+  final Article article;
+  const ArticleDetailPage({super.key, required this.article});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text(article.category)),
+    body: ListView(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 35),
+      children: [
+        Container(
+          width: double.infinity,
+          height: 190,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE8F8EF),
+            borderRadius: BorderRadius.circular(26),
+          ),
+          child: Icon(article.icon, color: green, size: 72),
+        ),
+        const SizedBox(height: 22),
+        Text(article.category.toUpperCase(), style: const TextStyle(color: green, fontWeight: FontWeight.w900, letterSpacing: 1.3, fontSize: 12)),
+        const SizedBox(height: 7),
+        Text(article.title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900, height: 1.1, letterSpacing: -1)),
+        const SizedBox(height: 13),
+        Text(article.summary, style: const TextStyle(color: muted, fontSize: 16, height: 1.5)),
+        const SizedBox(height: 24),
+        ...article.body.split('\\n\\n').map((p) => Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: Text(p, style: const TextStyle(fontSize: 16, height: 1.65)),
+        )),
+        const SizedBox(height: 8),
+        const Text('For informational purposes only. This article does not provide medical advice.', style: TextStyle(color: muted, fontSize: 12.5, height: 1.45)),
+      ],
+    ),
+  );
 }
 
 class ToolCard extends StatelessWidget {
