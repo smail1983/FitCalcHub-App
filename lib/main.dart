@@ -40,7 +40,7 @@ class _FitCalcHubAppState extends State<FitCalcHubApp> {
       brightness: brightness,
       primary: green,
     ),
-    scaffoldBackgroundColor: brightness == Brightness.dark ? const Color(0xFF0B1726) : Colors.white,
+    scaffoldBackgroundColor: brightness == Brightness.dark ? const Color(0xFF0B1726) : const Color(0xFFF7FAF8),
     appBarTheme: AppBarTheme(
       backgroundColor: brightness == Brightness.dark ? const Color(0xFF0B1726) : Colors.white,
       foregroundColor: brightness == Brightness.dark ? Colors.white : ink,
@@ -83,18 +83,32 @@ class _FitCalcHubAppState extends State<FitCalcHubApp> {
 
 class Brand extends StatelessWidget {
   const Brand({super.key});
-  @override Widget build(BuildContext context) => Row(children: [
-    Container(
-      width: 42, height: 42,
-      decoration: BoxDecoration(color: green, borderRadius: BorderRadius.circular(13)),
-      child: const Icon(Icons.monitor_heart_outlined, color: Colors.white, size: 25),
-    ),
-    const SizedBox(width: 10),
-    RichText(text: const TextSpan(
-      style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: ink, letterSpacing: -0.7),
-      children: [TextSpan(text: 'FitCalc'), TextSpan(text: 'Hub', style: TextStyle(color: green))],
-    )),
-  ]);
+  @override Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Row(children: [
+      Container(
+        width: 42, height: 42,
+        decoration: BoxDecoration(
+          color: green,
+          borderRadius: BorderRadius.circular(13),
+        ),
+        child: const Icon(Icons.monitor_heart_outlined, color: Colors.white, size: 25),
+      ),
+      const SizedBox(width: 10),
+      RichText(text: TextSpan(
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w900,
+          color: dark ? Colors.white : ink,
+          letterSpacing: -0.7,
+        ),
+        children: const [
+          TextSpan(text: 'FitCalc'),
+          TextSpan(text: 'Hub', style: TextStyle(color: green)),
+        ],
+      )),
+    ]);
+  }
 }
 
 class MainShell extends StatefulWidget {
@@ -189,66 +203,174 @@ class HomePage extends StatelessWidget {
   final ValueChanged<Calc> onOpen;
   const HomePage({super.key, required this.onOpen});
 
-  @override Widget build(BuildContext context) => SafeArea(
-    child: ListView(
-      padding: const EdgeInsets.only(bottom: 35),
-      children: [
-        Container(
-          margin: const EdgeInsets.fromLTRB(14, 14, 14, 0),
-          padding: const EdgeInsets.fromLTRB(22, 28, 22, 24),
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFFEEF9F3), Color(0xFFE3F3EB)]),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Brand(),
-            const SizedBox(height: 30),
-            const Text('HEALTH & FITNESS', style: TextStyle(color: green, fontWeight: FontWeight.w900, letterSpacing: 2)),
-            const SizedBox(height: 9),
-            Text('Simple tools for\nbetter health.', style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w900, letterSpacing: -2)),
-            const SizedBox(height: 14),
-            const Text('Free, fast and private calculators to help you understand your fitness numbers.', style: TextStyle(color: muted, fontSize: 16, height: 1.5)),
-            const SizedBox(height: 22),
-            FilledButton.icon(onPressed: () => onOpen(Calc.bmi), icon: const Icon(Icons.calculate_outlined), label: const Text('Start calculating')),
-          ]),
-        ),
-        const SizedBox(height: 30),
-        _sectionTitle(context, 'Popular calculators', 'Explore the most used tools.'),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          child: GridView.count(
-            crossAxisCount: 2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: 12, mainAxisSpacing: 12, childAspectRatio: .92,
-            children: [Calc.bmi, Calc.tdee, Calc.bmr, Calc.bodyFat].map((c) => ToolCard(calc: c, onTap: () => onOpen(c))).toList(),
-          ),
-        ),
-        const SizedBox(height: 28),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 14),
-          padding: const EdgeInsets.all(22),
-          decoration: BoxDecoration(color: soft, borderRadius: BorderRadius.circular(24)),
-          child: const Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Free & private', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 19)),
-            SizedBox(height: 7),
-            Text('Calculations run locally on your device. No account or backend is required.', style: TextStyle(color: muted, height: 1.45)),
-            SizedBox(height: 18),
-            Text('Important', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 19)),
-            SizedBox(height: 7),
-            Text('Results are estimates for informational purposes and are not medical advice.', style: TextStyle(color: muted, height: 1.45)),
-          ]),
-        ),
-      ],
-    ),
-  );
+  @override
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final card = dark ? const Color(0xFF132231) : const Color(0xFFF0F5F2);
+    final border = dark ? const Color(0xFF263847) : const Color(0xFFDDE6E1);
 
-  Widget _sectionTitle(BuildContext context, String title, String sub) => Padding(
-    padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900, letterSpacing: -1)),
-      const SizedBox(height: 4),
-      Text(sub, style: const TextStyle(color: muted)),
-    ]),
-  );
+    return SafeArea(
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 28),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
+            child: const Brand(),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 25, 20, 0),
+            child: Text(
+              'Simple, free health & fitness calculators.',
+              style: TextStyle(
+                color: dark ? const Color(0xFFCBD5DE) : const Color(0xFF334155),
+                fontSize: 17,
+                height: 1.35,
+              ),
+            ),
+          ),
+          const SizedBox(height: 28),
+
+          // Popular calculators — intentionally simple like the website's mobile layout.
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 14),
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 25),
+            decoration: BoxDecoration(
+              color: card,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: border),
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x100F172A),
+                  blurRadius: 10,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Popular calculators',
+                  style: TextStyle(
+                    color: dark ? Colors.white : ink,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Wrap(
+                  spacing: 14,
+                  runSpacing: 14,
+                  children: [
+                    _homeCalculatorButton(context, Calc.bmi),
+                    _homeCalculatorButton(context, Calc.tdee),
+                    _homeCalculatorButton(context, Calc.bmr),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 26),
+
+          _infoCard(
+            context,
+            title: 'Free & private',
+            body: 'Calculations run locally on your device. No account or backend is required.',
+          ),
+
+          const SizedBox(height: 20),
+
+          _infoCard(
+            context,
+            title: 'Important',
+            body: 'Results are estimates for informational use and are not medical advice.',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _homeCalculatorButton(BuildContext context, Calc calc) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => onOpen(calc),
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          constraints: const BoxConstraints(minWidth: 150, minHeight: 58),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          decoration: BoxDecoration(
+            color: dark ? const Color(0xFF172A39) : const Color(0xFFF8FBF9),
+            border: Border.all(
+              color: dark ? const Color(0xFF60717D) : const Color(0xFF7D8B86),
+              width: 1.6,
+            ),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Text(
+            calcName(calc),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: dark ? Colors.white : ink,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _infoCard(
+    BuildContext context, {
+    required String title,
+    required String body,
+  }) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 14),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 21),
+      decoration: BoxDecoration(
+        color: dark ? const Color(0xFF132231) : const Color(0xFFF0F5F2),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: dark ? const Color(0xFF263847) : const Color(0xFFDDE6E1),
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0D0F172A),
+            blurRadius: 9,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: dark ? Colors.white : ink,
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            body,
+            style: TextStyle(
+              color: dark ? const Color(0xFFCBD5DE) : muted,
+              fontSize: 15,
+              height: 1.45,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class ToolCard extends StatelessWidget {
