@@ -87,7 +87,7 @@ class S {
         'simple':'Calculadoras de salud y fitness simples y gratuitas.'
       }
     };
-    return m[l]?[key] ?? m['en']![key] ?? key : key;
+    return m[l]?[key] ?? m['en']?[key] ?? key;
   }
 }
 
@@ -220,7 +220,7 @@ class _MainShellState extends State<MainShell> {
         selectedIndex: index,
         onDestinationSelected: (i) => setState(() => index = i),
         indicatorColor: green.withOpacity(.13),
-        destinations: const [
+        destinations: [
           NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home, color: green), label: S.of(context).x('home')),
           NavigationDestination(icon: Icon(Icons.calculate_outlined), selectedIcon: Icon(Icons.calculate, color: green), label: S.of(context).x('calculators')),
           NavigationDestination(icon: Icon(Icons.bookmark_border), selectedIcon: Icon(Icons.bookmark, color: green), label: S.of(context).x('saved')),
