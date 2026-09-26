@@ -16,6 +16,81 @@ void main() async {
   runApp(FitCalcHubApp(prefs: prefs));
 }
 
+
+
+class AppLanguage extends InheritedWidget {
+  final String language;
+  final ValueChanged<String> onChanged;
+  const AppLanguage({super.key, required this.language, required this.onChanged, required super.child});
+  static AppLanguage of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<AppLanguage>()!;
+  @override bool updateShouldNotify(AppLanguage oldWidget) => language != oldWidget.language;
+}
+
+class S {
+  final String l;
+  S(this.l);
+  static S of(BuildContext c) => S(AppLanguage.of(c).language);
+  static const _names = {'en':'English','ar':'العربية','fr':'Français','es':'Español'};
+  String get languageName => _names[l] ?? 'English';
+  String x(String key) {
+    const m = {
+      'en': {
+        'home':'Home','calculators':'Calculators','saved':'Saved','settings':'Settings',
+        'dark':'Dark mode','units':'Units','privacy':'Privacy','disclaimer':'Medical disclaimer',
+        'language':'Language','chooseLanguage':'Choose app language',
+        'popular':'Popular calculators','freePrivate':'Free & private','important':'Important',
+        'latest':'Latest articles','viewAll':'View all','tips':S.of(context).x('tips'),
+        'freeBody':'Calculations run locally on your device. No account or backend is required.',
+        'importantBody':'Results are estimates for informational use and are not medical advice.',
+        'settingsBody':'Keep FitCalcHub simple and personalized.','unitsBody':'Calculator input units follow the FitCalcHub website.',
+        'privacyBody':'No account or backend is required. Saved results stay locally.',
+        'disclaimerBody':'Results are estimates for informational use only.',
+        'simple':'Simple, free health & fitness calculators.'
+      },
+      'ar': {
+        'home':'الرئيسية','calculators':'الحاسبات','saved':'المحفوظات','settings':'الإعدادات',
+        'dark':'الوضع الداكن','units':'الوحدات','privacy':'الخصوصية','disclaimer':'إخلاء المسؤولية الطبية',
+        'language':'اللغة','chooseLanguage':'اختر لغة التطبيق',
+        'popular':'الحاسبات الشائعة','freePrivate':'مجاني وخصوصي','important':'مهم',
+        'latest':'أحدث المقالات','viewAll':'عرض الكل','tips':'نصائح مفيدة للصحة والتغذية واللياقة.',
+        'freeBody':'تعمل الحسابات محليًا على جهازك. لا تحتاج إلى حساب أو خادم.',
+        'importantBody':'النتائج تقديرية للاستخدام المعلوماتي وليست نصيحة طبية.',
+        'settingsBody':'اجعل FitCalcHub بسيطًا ومخصصًا لك.','unitsBody':'تتبع وحدات إدخال الحاسبات موقع FitCalcHub.',
+        'privacyBody':'لا حاجة إلى حساب أو خادم. تبقى النتائج المحفوظة على جهازك.',
+        'disclaimerBody':'النتائج تقديرية للاستخدام المعلوماتي فقط.',
+        'simple':'حاسبات صحية ولياقة بسيطة ومجانية.'
+      },
+      'fr': {
+        'home':'Accueil','calculators':'Calculatrices','saved':'Enregistrés','settings':'Paramètres',
+        'dark':'Mode sombre','units':'Unités','privacy':'Confidentialité','disclaimer':'Avertissement médical',
+        'language':'Langue','chooseLanguage':'Choisir la langue de l’application',
+        'popular':'Calculatrices populaires','freePrivate':'Gratuit et privé','important':'Important',
+        'latest':'Derniers articles','viewAll':'Voir tout','tips':'Conseils utiles sur la santé, la nutrition et le fitness.',
+        'freeBody':'Les calculs sont effectués localement sur votre appareil. Aucun compte ni serveur n’est requis.',
+        'importantBody':'Les résultats sont des estimations à titre informatif et ne constituent pas un avis médical.',
+        'settingsBody':'Gardez FitCalcHub simple et personnalisé.','unitsBody':'Les unités suivent celles du site FitCalcHub.',
+        'privacyBody':'Aucun compte ni serveur n’est requis. Les résultats restent sur votre appareil.',
+        'disclaimerBody':'Les résultats sont des estimations à titre informatif uniquement.',
+        'simple':'Calculatrices santé et fitness simples et gratuites.'
+      },
+      'es': {
+        'home':'Inicio','calculators':'Calculadoras','saved':'Guardados','settings':'Ajustes',
+        'dark':'Modo oscuro','units':'Unidades','privacy':'Privacidad','disclaimer':'Aviso médico',
+        'language':'Idioma','chooseLanguage':'Elegir idioma de la aplicación',
+        'popular':'Calculadoras populares','freePrivate':'Gratis y privado','important':'Importante',
+        'latest':'Últimos artículos','viewAll':'Ver todo','tips':'Consejos útiles de salud, nutrición y fitness.',
+        'freeBody':'Los cálculos se realizan localmente en tu dispositivo. No se necesita cuenta ni servidor.',
+        'importantBody':'Los resultados son estimaciones informativas y no constituyen asesoramiento médico.',
+        'settingsBody':'Mantén FitCalcHub simple y personalizado.','unitsBody':'Las unidades siguen las del sitio web de FitCalcHub.',
+        'privacyBody':'No se necesita cuenta ni servidor. Los resultados guardados permanecen en tu dispositivo.',
+        'disclaimerBody':'Los resultados son estimaciones solo con fines informativos.',
+        'simple':'Calculadoras de salud y fitness simples y gratuitas.'
+      }
+    };
+    return m[l]?[key] ?? m['en']![key] ?? key : key;
+  }
+}
+
 class FitCalcHubApp extends StatefulWidget {
   final SharedPreferences prefs;
   const FitCalcHubApp({super.key, required this.prefs});
@@ -24,10 +99,13 @@ class FitCalcHubApp extends StatefulWidget {
 
 class _FitCalcHubAppState extends State<FitCalcHubApp> {
   bool dark = false;
+  String language = 'en';
   @override void initState() {
     super.initState();
     dark = widget.prefs.getBool('dark') ?? false;
+    language = widget.prefs.getString('language') ?? 'en';
   }
+  void setLanguage(String value) { setState(() => language = value); widget.prefs.setString('language', value); }
   void setDark(bool value) {
     setState(() => dark = value);
     widget.prefs.setBool('dark', value);
@@ -78,7 +156,7 @@ class _FitCalcHubAppState extends State<FitCalcHubApp> {
     themeMode: dark ? ThemeMode.dark : ThemeMode.light,
     theme: _theme(Brightness.light),
     darkTheme: _theme(Brightness.dark),
-    home: MainShell(prefs: widget.prefs, dark: dark, onDark: setDark),
+    home: AppLanguage(language: language, onChanged: setLanguage, child: Directionality(textDirection: language == 'ar' ? TextDirection.rtl : TextDirection.ltr, child: MainShell(prefs: widget.prefs, dark: dark, onDark: setDark))),
   );
 }
 
@@ -143,10 +221,10 @@ class _MainShellState extends State<MainShell> {
         onDestinationSelected: (i) => setState(() => index = i),
         indicatorColor: green.withOpacity(.13),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home, color: green), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.calculate_outlined), selectedIcon: Icon(Icons.calculate, color: green), label: 'Calculators'),
-          NavigationDestination(icon: Icon(Icons.bookmark_border), selectedIcon: Icon(Icons.bookmark, color: green), label: 'Saved'),
-          NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings, color: green), label: 'Settings'),
+          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home, color: green), label: S.of(context).x('home')),
+          NavigationDestination(icon: Icon(Icons.calculate_outlined), selectedIcon: Icon(Icons.calculate, color: green), label: S.of(context).x('calculators')),
+          NavigationDestination(icon: Icon(Icons.bookmark_border), selectedIcon: Icon(Icons.bookmark, color: green), label: S.of(context).x('saved')),
+          NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings, color: green), label: S.of(context).x('settings')),
         ],
       ),
     );
@@ -259,7 +337,7 @@ class HomePage extends StatelessWidget {
                       ),
                       const SizedBox(height: 7),
                       const Text(
-                        'Simple, free health & fitness calculators.',
+                        S.of(context).x('simple'),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16,
@@ -295,7 +373,7 @@ class HomePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Popular calculators',
+                  S.of(context).x('popular'),
                   style: TextStyle(
                     color: dark ? Colors.white : ink,
                     fontSize: 22,
@@ -321,16 +399,16 @@ class HomePage extends StatelessWidget {
 
           _infoCard(
             context,
-            title: 'Free & private',
-            body: 'Calculations run locally on your device. No account or backend is required.',
+            title: S.of(context).x('freePrivate'),
+            body: S.of(context).x('freeBody'),
           ),
 
           const SizedBox(height: 20),
 
           _infoCard(
             context,
-            title: 'Important',
-            body: 'Results are estimates for informational use and are not medical advice.',
+            title: S.of(context).x('important'),
+            body: S.of(context).x('importantBody'),
           ),
 
           const SizedBox(height: 30),
@@ -351,7 +429,7 @@ class HomePage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Latest articles', style: TextStyle(
+                      Text(S.of(context).x('latest'), style: TextStyle(
                         color: dark ? Colors.white : ink,
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
@@ -359,7 +437,7 @@ class HomePage extends StatelessWidget {
                       )),
                       TextButton(
                         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ArticlesPage())),
-                        child: const Text('View all', style: TextStyle(color: green, fontWeight: FontWeight.w800)),
+                        child: Text(S.of(context).x('viewAll'), style: TextStyle(color: green, fontWeight: FontWeight.w800)),
                       ),
                     ],
                   ),
@@ -888,15 +966,32 @@ class SettingsPage extends StatelessWidget{
   final SharedPreferences prefs;final bool dark;final ValueChanged<bool> onDark;
   const SettingsPage({super.key,required this.prefs,required this.dark,required this.onDark});
   @override Widget build(BuildContext context)=>SafeArea(child:ListView(padding:const EdgeInsets.only(bottom:30),children:[
-    const PageHeader(title:'Settings',subtitle:'Keep FitCalcHub simple and personalized.'),
+    PageHeader(title:S.of(context).x('settings'),subtitle:S.of(context).x('settingsBody')),
     Padding(padding:const EdgeInsets.symmetric(horizontal:14),child:Card(child:Column(children:[
-      SwitchListTile(value:dark,onChanged:onDark,title:const Text('Dark mode',style:TextStyle(fontWeight:FontWeight.w700)),secondary:const Icon(Icons.dark_mode_outlined,color:green)),
+      ListTile(
+        leading: const Icon(Icons.language_outlined,color:green),
+        title: Text(S.of(context).x('language'),style: const TextStyle(fontWeight:FontWeight.w700)),
+        subtitle: Text(S.of(context).languageName),
+        trailing: DropdownButton<String>(
+          value: AppLanguage.of(context).language,
+          underline: const SizedBox.shrink(),
+          items: const [
+            DropdownMenuItem(value:'en',child:Text('English')),
+            DropdownMenuItem(value:'ar',child:Text('العربية')),
+            DropdownMenuItem(value:'fr',child:Text('Français')),
+            DropdownMenuItem(value:'es',child:Text('Español')),
+          ],
+          onChanged: (v){ if(v!=null) AppLanguage.of(context).onChanged(v); },
+        ),
+      ),
       const Divider(height:1),
-      const ListTile(leading:Icon(Icons.straighten_outlined,color:green),title:Text('Units',style:TextStyle(fontWeight:FontWeight.w700)),subtitle:Text('Calculator input units follow the FitCalcHub website.')),
+      SwitchListTile(value:dark,onChanged:onDark,title:Text(S.of(context).x('dark'),style:const TextStyle(fontWeight:FontWeight.w700)),secondary:const Icon(Icons.dark_mode_outlined,color:green)),
       const Divider(height:1),
-      const ListTile(leading:Icon(Icons.lock_outline,color:green),title:Text('Privacy',style:TextStyle(fontWeight:FontWeight.w700)),subtitle:Text('No account or backend is required. Saved results stay locally.')),
+      const ListTile(leading:Icon(Icons.straighten_outlined,color:green),title:Text(S.of(context).x('units'),style:const TextStyle(fontWeight:FontWeight.w700)),subtitle:Text(S.of(context).x('unitsBody'))),
       const Divider(height:1),
-      const ListTile(leading:Icon(Icons.info_outline,color:green),title:Text('Medical disclaimer',style:TextStyle(fontWeight:FontWeight.w700)),subtitle:Text('Results are estimates for informational use only.')),
+      const ListTile(leading:Icon(Icons.lock_outline,color:green),title:Text(S.of(context).x('privacy'),style:const TextStyle(fontWeight:FontWeight.w700)),subtitle:Text(S.of(context).x('privacyBody'))),
+      const Divider(height:1),
+      const ListTile(leading:Icon(Icons.info_outline,color:green),title:Text(S.of(context).x('disclaimer'),style:const TextStyle(fontWeight:FontWeight.w700)),subtitle:Text(S.of(context).x('disclaimerBody'))),
     ]))),
   ]));
 }
