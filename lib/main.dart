@@ -657,32 +657,28 @@ class ArticleCard extends StatelessWidget {
           border: Border.all(color: line),
           boxShadow: const [BoxShadow(color: Color(0x0B0F172A), blurRadius: 16, offset: Offset(0, 5))],
         ),
-        child: Row(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(17),
+              borderRadius: BorderRadius.circular(18),
               child: SizedBox(
-                width: 78,
-                height: 78,
+                width: double.infinity,
+                height: 185,
                 child: SvgPicture.asset(
                   article.imageUrl,
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(article.category.toUpperCase(), style: const TextStyle(color: green, fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1)),
-                const SizedBox(height: 5),
-                Text(article.title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w900, height: 1.2)),
-                const SizedBox(height: 6),
-                Text(article.summary, style: const TextStyle(color: muted, fontSize: 13, height: 1.4)),
-                const SizedBox(height: 9),
-                const Text('Read article →', style: TextStyle(color: green, fontWeight: FontWeight.w900, fontSize: 13)),
-              ]),
-            ),
+            const SizedBox(height: 15),
+            Text(article.category.toUpperCase(), style: const TextStyle(color: green, fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1)),
+            const SizedBox(height: 5),
+            Text(article.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, height: 1.2)),
+            const SizedBox(height: 6),
+            Text(article.summary, style: const TextStyle(color: muted, fontSize: 13, height: 1.4)),
+            const SizedBox(height: 10),
+            const Text('Read article →', style: TextStyle(color: green, fontWeight: FontWeight.w900, fontSize: 13)),
           ],
         ),
       ),
