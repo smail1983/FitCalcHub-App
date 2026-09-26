@@ -629,13 +629,9 @@ class ArticleDetailPage extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image.network(
+                SvgPicture.asset(
                   article.imageUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: const Color(0xFFE8F8EF),
-                    child: Icon(article.icon, color: green, size: 72),
-                  ),
                 ),
                 DecoratedBox(
                   decoration: BoxDecoration(
