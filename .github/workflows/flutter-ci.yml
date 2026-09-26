@@ -28,6 +28,9 @@ jobs:
       - name: Create Android project
         run: flutter create --platforms android --org com.fitcalchub .
 
+      - name: Remove generated sample tests
+        run: rm -rf test
+
       - name: Install dependencies
         run: flutter pub get
 
