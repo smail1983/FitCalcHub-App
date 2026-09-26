@@ -45,7 +45,9 @@ class S {
         'settingsBody':'Keep FitCalcHub simple and personalized.','unitsBody':'Calculator input units follow the FitCalcHub website.',
         'privacyBody':'No account or backend is required. Saved results stay locally.',
         'disclaimerBody':'Results are estimates for informational use only.',
-        'simple':'Simple, free health & fitness calculators.'
+        'simple':'Simple, free health & fitness calculators.',
+        'bmi':'BMI Calculator','bmr':'BMR Calculator','tdee':'TDEE Calculator','bodyFat':'Body Fat Calculator','meal':'Meal Calorie Calculator','deficit':'Calorie Deficit Calculator',
+        'calculate':'Calculate','saveResult':'Save result','resultSaved':'Result saved','noSaved':'No saved results yet.'
       },
       'ar': {
         'home':'الرئيسية','calculators':'الحاسبات','saved':'المحفوظات','settings':'الإعدادات',
@@ -58,7 +60,9 @@ class S {
         'settingsBody':'اجعل FitCalcHub بسيطًا ومخصصًا لك.','unitsBody':'تتبع وحدات إدخال الحاسبات موقع FitCalcHub.',
         'privacyBody':'لا حاجة إلى حساب أو خادم. تبقى النتائج المحفوظة على جهازك.',
         'disclaimerBody':'النتائج تقديرية للاستخدام المعلوماتي فقط.',
-        'simple':'حاسبات صحية ولياقة بسيطة ومجانية.'
+        'simple':'حاسبات صحية ولياقة بسيطة ومجانية.',
+        'bmi':'حاسبة مؤشر كتلة الجسم','bmr':'حاسبة معدل الأيض الأساسي','tdee':'حاسبة الاحتياج اليومي','bodyFat':'حاسبة نسبة الدهون','meal':'حاسبة سعرات الوجبة','deficit':'حاسبة عجز السعرات',
+        'calculate':'احسب','saveResult':'حفظ النتيجة','resultSaved':'تم حفظ النتيجة','noSaved':'لا توجد نتائج محفوظة بعد.'
       },
       'fr': {
         'home':'Accueil','calculators':'Calculatrices','saved':'Enregistrés','settings':'Paramètres',
@@ -71,7 +75,9 @@ class S {
         'settingsBody':'Gardez FitCalcHub simple et personnalisé.','unitsBody':'Les unités suivent celles du site FitCalcHub.',
         'privacyBody':'Aucun compte ni serveur n’est requis. Les résultats restent sur votre appareil.',
         'disclaimerBody':'Les résultats sont des estimations à titre informatif uniquement.',
-        'simple':'Calculatrices santé et fitness simples et gratuites.'
+        'simple':'Calculatrices santé et fitness simples et gratuites.',
+        'bmi':'Calculatrice IMC','bmr':'Calculatrice MB','tdee':'Calculatrice TDEE','bodyFat':'Calculatrice de masse grasse','meal':'Calculatrice de calories du repas','deficit':'Calculatrice de déficit calorique',
+        'calculate':'Calculer','saveResult':'Enregistrer le résultat','resultSaved':'Résultat enregistré','noSaved':'Aucun résultat enregistré.'
       },
       'es': {
         'home':'Inicio','calculators':'Calculadoras','saved':'Guardados','settings':'Ajustes',
@@ -84,7 +90,9 @@ class S {
         'settingsBody':'Mantén FitCalcHub simple y personalizado.','unitsBody':'Las unidades siguen las del sitio web de FitCalcHub.',
         'privacyBody':'No se necesita cuenta ni servidor. Los resultados guardados permanecen en tu dispositivo.',
         'disclaimerBody':'Los resultados son estimaciones solo con fines informativos.',
-        'simple':'Calculadoras de salud y fitness simples y gratuitas.'
+        'simple':'Calculadoras de salud y fitness simples y gratuitas.',
+        'bmi':'Calculadora de IMC','bmr':'Calculadora de TMB','tdee':'Calculadora TDEE','bodyFat':'Calculadora de grasa corporal','meal':'Calculadora de calorías de comida','deficit':'Calculadora de déficit calórico',
+        'calculate':'Calcular','saveResult':'Guardar resultado','resultSaved':'Resultado guardado','noSaved':'Aún no hay resultados guardados.'
       }
     };
     return m[l]?[key] ?? m['en']?[key] ?? key;
@@ -242,6 +250,15 @@ String calcName(Calc c) => switch (c) {
   Calc.deficit => 'Calorie Deficit Calculator',
 };
 
+String calcNameLocalized(BuildContext context, Calc c) => switch (c) {
+  Calc.bmi => S.of(context).x('bmi'),
+  Calc.bmr => S.of(context).x('bmr'),
+  Calc.tdee => S.of(context).x('tdee'),
+  Calc.bodyFat => S.of(context).x('bodyFat'),
+  Calc.meal => S.of(context).x('meal'),
+  Calc.deficit => S.of(context).x('deficit'),
+};
+
 IconData calcIcon(Calc c) => switch (c) {
   Calc.bmi => Icons.monitor_weight_outlined,
   Calc.bmr => Icons.local_fire_department_outlined,
@@ -293,59 +310,42 @@ class HomePage extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 28),
         children: [
           // Website-style visual hero background.
-          SizedBox(
-            height: 250,
-            child: Stack(
-              fit: StackFit.expand,
+          Container(
+            height: 220,
+            margin: const EdgeInsets.only(bottom: 2),
+            padding: const EdgeInsets.fromLTRB(22, 24, 22, 26),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF0B1726), Color(0xFF087D46), Color(0xFF08A957)],
+              ),
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(32),
+                bottomRight: Radius.circular(32),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(32),
-                    bottomRight: Radius.circular(32),
-                  ),
-                  child: SvgPicture.asset(
-                    'assets/fitcalchub-hero.svg',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.black.withOpacity(.12),
-                        Colors.black.withOpacity(.52),
-                      ],
-                    ),
+                const Text(
+                  'FitCalcHub',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -1.1,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 28, 20, 26),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      const Text(
-                        'FitCalcHub',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 31,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -1.1,
-                        ),
-                      ),
-                      const SizedBox(height: 7),
-                      Text(
-                        S.of(context).x('simple'),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          height: 1.35,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
+                const SizedBox(height: 8),
+                Text(
+                  S.of(context).x('simple'),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    height: 1.35,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -775,7 +775,7 @@ class ToolCard extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(width: 50, height: 50, decoration: BoxDecoration(color: const Color(0xFFE8F8EF), borderRadius: BorderRadius.circular(15)), child: Icon(calcIcon(calc), color: green, size: 25)),
         const SizedBox(height: 15),
-        Text(calcName(calc), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+        Text(calcNameLocalized(context, calc), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
         const SizedBox(height: 5),
         Expanded(child: Text(calcDesc(calc), style: const TextStyle(color: muted, fontSize: 12.5, height: 1.35))),
         const Text('Calculate →', style: TextStyle(color: green, fontWeight: FontWeight.w900)),
@@ -804,7 +804,7 @@ class CalculatorList extends StatelessWidget {
                 Container(width: 52, height: 52, decoration: BoxDecoration(color: const Color(0xFFE8F8EF), borderRadius: BorderRadius.circular(16)), child: Icon(calcIcon(c), color: green)),
                 const SizedBox(width: 14),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text(calcName(c), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+                  Text(calcNameLocalized(context, c), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
                   const SizedBox(height: 4), Text(calcDesc(c), style: const TextStyle(color: muted, fontSize: 13)),
                 ])),
                 const Icon(Icons.chevron_right, color: green),
@@ -840,7 +840,7 @@ class _CalcPageState extends State<CalcPage> {
     old.insert(0, '${calcName(widget.calc)}: $result');
     if (old.length > 30) old.removeLast();
     widget.prefs.setStringList('results', old);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Result saved')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(S.of(context).x('resultSaved'))));
   }
 
   void calculate() {
@@ -871,7 +871,7 @@ class _CalcPageState extends State<CalcPage> {
       Calc.deficit=>['age','weightKg','heightCm'], Calc.bodyFat=>['heightCm','neck','waist','hip'], Calc.meal=>[]
     };
     return Scaffold(
-      appBar: AppBar(title: Text(calcName(widget.calc))),
+      appBar: AppBar(title: Text(calcNameLocalized(context, widget.calc))),
       body: ListView(padding: const EdgeInsets.fromLTRB(18, 8, 18, 35), children: [
         Container(
           padding: const EdgeInsets.all(20),
@@ -895,7 +895,7 @@ class _CalcPageState extends State<CalcPage> {
             DropdownMenuItem(value:'1.55',child:Text('Moderately active')),DropdownMenuItem(value:'1.725',child:Text('Very active')),DropdownMenuItem(value:'1.9',child:Text('Extra active'))
           ],onChanged:(v)=>setState(()=>activity=v!)),const SizedBox(height:14)
         ],
-        FilledButton.icon(onPressed:calculate,icon:const Icon(Icons.calculate_outlined),label:const Text('Calculate')),
+        FilledButton.icon(onPressed:calculate,icon:const Icon(Icons.calculate_outlined),label:Text(S.of(context).x('calculate'))),
         if(result.isNotEmpty)...[
           const SizedBox(height:18),
           Container(padding:const EdgeInsets.all(20),decoration:BoxDecoration(color:const Color(0xFFE8F8EF),borderRadius:BorderRadius.circular(22)),child:Column(crossAxisAlignment:CrossAxisAlignment.start,children:[
@@ -903,7 +903,7 @@ class _CalcPageState extends State<CalcPage> {
             const SizedBox(height:9),Text(result,style:const TextStyle(fontSize:19,fontWeight:FontWeight.w900,height:1.4)),
           ])),
           const SizedBox(height:10),
-          OutlinedButton.icon(onPressed:save,icon:const Icon(Icons.bookmark_add_outlined),label:const Text('Save result')),
+          OutlinedButton.icon(onPressed:save,icon:const Icon(Icons.bookmark_add_outlined),label:Text(S.of(context).x('saveResult'))),
         ],
         const SizedBox(height:18),
         const Text('For informational purposes only. This calculator does not provide medical advice.',style:TextStyle(color:muted,fontSize:12.5,height:1.4)),
@@ -957,7 +957,7 @@ class SavedPage extends StatefulWidget {
 class _SavedPageState extends State<SavedPage>{
   @override Widget build(BuildContext context){final r=widget.prefs.getStringList('results')??[];return SafeArea(child:ListView(padding:const EdgeInsets.only(bottom:30),children:[
     const PageHeader(title:'Saved Results',subtitle:'Your recent calculator results stay on this device.'),
-    if(r.isEmpty)Padding(padding:const EdgeInsets.all(20),child:Container(padding:const EdgeInsets.all(25),decoration:BoxDecoration(color:soft,borderRadius:BorderRadius.circular(22)),child:const Column(children:[Icon(Icons.bookmark_border,size:42,color:green),SizedBox(height:10),Text('No saved results yet.',style:TextStyle(fontWeight:FontWeight.w700))])))
+    if(r.isEmpty)Padding(padding:const EdgeInsets.all(20),child:Container(padding:const EdgeInsets.all(25),decoration:BoxDecoration(color:soft,borderRadius:BorderRadius.circular(22)),child:const Column(children:[Icon(Icons.bookmark_border,size:42,color:green),SizedBox(height:10),Text(S.of(context).x('noSaved'),style:const TextStyle(fontWeight:FontWeight.w700))])))
     else ...r.map((x)=>Padding(padding:const EdgeInsets.fromLTRB(14,0,14,10),child:Card(child:ListTile(leading:const Icon(Icons.bookmark,color:green),title:Text(x))))),
   ]));}
 }
@@ -972,17 +972,35 @@ class SettingsPage extends StatelessWidget{
         leading: const Icon(Icons.language_outlined,color:green),
         title: Text(S.of(context).x('language'),style: const TextStyle(fontWeight:FontWeight.w700)),
         subtitle: Text(S.of(context).languageName),
-        trailing: DropdownButton<String>(
-          value: AppLanguage.of(context).language,
-          underline: const SizedBox.shrink(),
-          items: const [
-            DropdownMenuItem(value:'en',child:Text('English')),
-            DropdownMenuItem(value:'ar',child:Text('العربية')),
-            DropdownMenuItem(value:'fr',child:Text('Français')),
-            DropdownMenuItem(value:'es',child:Text('Español')),
-          ],
-          onChanged: (v){ if(v!=null) AppLanguage.of(context).onChanged(v); },
-        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () async {
+          final current = AppLanguage.of(context).language;
+          final selected = await showModalBottomSheet<String>(
+            context: context,
+            showDragHandle: true,
+            builder: (sheetContext) => SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(title: Text(S.of(context).x('chooseLanguage'), style: const TextStyle(fontWeight: FontWeight.w900))),
+                  for (final item in const [
+                    ('en','English'), ('ar','العربية'), ('fr','Français'), ('es','Español')
+                  ])
+                    RadioListTile<String>(
+                      value: item.$1,
+                      groupValue: current,
+                      title: Text(item.$2),
+                      onChanged: (v) => Navigator.pop(sheetContext, v),
+                    ),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
+          );
+          if (selected != null && selected != current) {
+            AppLanguage.of(context).onChanged(selected);
+          }
+        },
       ),
       const Divider(height:1),
       SwitchListTile(value:dark,onChanged:onDark,title:Text(S.of(context).x('dark'),style:const TextStyle(fontWeight:FontWeight.w700)),secondary:const Icon(Icons.dark_mode_outlined,color:green)),
