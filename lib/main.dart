@@ -669,6 +669,7 @@ class ArticleCard extends StatelessWidget {
                   article.imageUrl,
                   fit: BoxFit.cover,
                 ),
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -840,7 +841,7 @@ class _CalcPageState extends State<CalcPage> {
     old.insert(0, '${calcName(widget.calc)}: $result');
     if (old.length > 30) old.removeLast();
     widget.prefs.setStringList('results', old);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text(S.of(context).x('resultSaved'))));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(S.of(context).x('resultSaved'))));
   }
 
   void calculate() {
@@ -957,7 +958,7 @@ class SavedPage extends StatefulWidget {
 class _SavedPageState extends State<SavedPage>{
   @override Widget build(BuildContext context){final r=widget.prefs.getStringList('results')??[];return SafeArea(child:ListView(padding:const EdgeInsets.only(bottom:30),children:[
     const PageHeader(title:'Saved Results',subtitle:'Your recent calculator results stay on this device.'),
-    if(r.isEmpty)Padding(padding:const EdgeInsets.all(20),child:Container(padding:const EdgeInsets.all(25),decoration:BoxDecoration(color:soft,borderRadius:BorderRadius.circular(22)),child:const Column(children:[Icon(Icons.bookmark_border,size:42,color:green),SizedBox(height:10),Text(S.of(context).x('noSaved'),style:const TextStyle(fontWeight:FontWeight.w700))])))
+    if(r.isEmpty)Padding(padding:const EdgeInsets.all(20),child:Container(padding:const EdgeInsets.all(25),decoration:BoxDecoration(color:soft,borderRadius:BorderRadius.circular(22)),child:Column(children:[const Icon(Icons.bookmark_border,size:42,color:green),const SizedBox(height:10),Text(S.of(context).x('noSaved'),style:const TextStyle(fontWeight:FontWeight.w700))])))
     else ...r.map((x)=>Padding(padding:const EdgeInsets.fromLTRB(14,0,14,10),child:Card(child:ListTile(leading:const Icon(Icons.bookmark,color:green),title:Text(x))))),
   ]));}
 }
