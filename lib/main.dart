@@ -482,7 +482,7 @@ const appArticles = <Article>[
     title: 'How Many Calories Should I Eat a Day?',
     summary: 'Understand daily calorie needs and the factors that affect them.',
     icon: Icons.restaurant_outlined,
-    imageUrl: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'assets/article-calories.svg',
     body: 'Daily calorie needs vary from person to person. Age, body size, sex, activity level and goals all influence how much energy you may need.\\n\\nA useful starting point is to estimate your basal metabolic rate (BMR), then account for activity to estimate total daily energy expenditure (TDEE). These numbers are estimates, not exact measurements.\\n\\nUse the FitCalcHub BMR and TDEE calculators as a starting point, then consider your real-world progress and professional guidance when appropriate.',
   ),
   Article(
@@ -490,7 +490,7 @@ const appArticles = <Article>[
     title: 'BMR vs TDEE: What Is the Difference?',
     summary: 'Learn how these two calorie estimates are different and when they are useful.',
     icon: Icons.local_fire_department_outlined,
-    imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'assets/article-bmr.svg',
     body: 'BMR is an estimate of the energy your body uses at rest to support basic functions. TDEE is an estimate of your total daily energy expenditure after activity is included.\\n\\nBecause activity changes from day to day, TDEE is best viewed as an estimate rather than a fixed number. Understanding the difference can make calorie planning easier to interpret.\\n\\nFitCalcHub provides separate BMR and TDEE calculators so you can explore both estimates.',
   ),
   Article(
@@ -498,7 +498,7 @@ const appArticles = <Article>[
     title: 'How Much Protein Do I Need?',
     summary: 'A practical guide to protein intake for everyday fitness goals.',
     icon: Icons.egg_alt_outlined,
-    imageUrl: 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'assets/article-protein.svg',
     body: 'Protein is an important nutrient used to build and maintain body tissues. The amount a person needs depends on factors such as body size, age, activity and overall diet.\\n\\nFor active people, spreading protein-containing foods across meals can be a practical way to include it regularly. Foods such as eggs, dairy, fish, meat, beans and lentils can all contribute protein.\\n\\nIndividual needs can differ, so use general guidance as a starting point rather than a medical prescription.',
   ),
   Article(
@@ -506,7 +506,7 @@ const appArticles = <Article>[
     title: 'Understanding BMI: What It Can and Cannot Tell You',
     summary: 'Learn what BMI measures and why it should be interpreted with context.',
     icon: Icons.monitor_weight_outlined,
-    imageUrl: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
+    imageUrl: 'assets/article-bmi.svg',
     body: 'Body Mass Index (BMI) is calculated from height and weight. It is commonly used as a screening measure, but it does not directly measure body fat or distinguish muscle from fat.\\n\\nFor that reason, BMI is most useful when considered alongside other information such as waist measurement, body composition, fitness and overall health.\\n\\nThe FitCalcHub BMI calculator provides an estimate for informational use and is not a diagnosis.',
   ),
 ];
@@ -587,15 +587,10 @@ class ArticleCard extends StatelessWidget {
               child: SizedBox(
                 width: 78,
                 height: 78,
-                child: Image.network(
+                child: SvgPicture.asset(
                   article.imageUrl,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: const Color(0xFFE8F8EF),
-                    child: Icon(article.icon, color: green, size: 28),
-                  ),
                 ),
-              ),
             ),
             const SizedBox(width: 14),
             Expanded(
