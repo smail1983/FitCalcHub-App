@@ -39,7 +39,7 @@ class S {
         'dark':'Dark mode','units':'Units','privacy':'Privacy','disclaimer':'Medical disclaimer',
         'language':'Language','chooseLanguage':'Choose app language',
         'popular':'Popular calculators','freePrivate':'Free & private','important':'Important',
-        'latest':'Latest articles','viewAll':'View all','tips':S.of(context).x('tips'),
+        'latest':'Latest articles','viewAll':'View all','tips':'Helpful health, nutrition and fitness tips.',
         'freeBody':'Calculations run locally on your device. No account or backend is required.',
         'importantBody':'Results are estimates for informational use and are not medical advice.',
         'settingsBody':'Keep FitCalcHub simple and personalized.','unitsBody':'Calculator input units follow the FitCalcHub website.',
@@ -336,7 +336,7 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 7),
-                      const Text(
+                      Text(
                         S.of(context).x('simple'),
                         style: TextStyle(
                           color: Colors.white,
@@ -987,11 +987,11 @@ class SettingsPage extends StatelessWidget{
       const Divider(height:1),
       SwitchListTile(value:dark,onChanged:onDark,title:Text(S.of(context).x('dark'),style:const TextStyle(fontWeight:FontWeight.w700)),secondary:const Icon(Icons.dark_mode_outlined,color:green)),
       const Divider(height:1),
-      const ListTile(leading:Icon(Icons.straighten_outlined,color:green),title:Text(S.of(context).x('units'),style:const TextStyle(fontWeight:FontWeight.w700)),subtitle:Text(S.of(context).x('unitsBody'))),
+      ListTile(leading:const Icon(Icons.straighten_outlined,color:green),title:Text(S.of(context).x('units'),style:const TextStyle(fontWeight:FontWeight.w700)),subtitle:Text(S.of(context).x('unitsBody'))),
       const Divider(height:1),
-      const ListTile(leading:Icon(Icons.lock_outline,color:green),title:Text(S.of(context).x('privacy'),style:const TextStyle(fontWeight:FontWeight.w700)),subtitle:Text(S.of(context).x('privacyBody'))),
+      ListTile(leading:const Icon(Icons.lock_outline,color:green),title:Text(S.of(context).x('privacy'),style:const TextStyle(fontWeight:FontWeight.w700)),subtitle:Text(S.of(context).x('privacyBody'))),
       const Divider(height:1),
-      const ListTile(leading:Icon(Icons.info_outline,color:green),title:Text(S.of(context).x('disclaimer'),style:const TextStyle(fontWeight:FontWeight.w700)),subtitle:Text(S.of(context).x('disclaimerBody'))),
+      ListTile(leading:const Icon(Icons.info_outline,color:green),title:Text(S.of(context).x('disclaimer'),style:const TextStyle(fontWeight:FontWeight.w700)),subtitle:Text(S.of(context).x('disclaimerBody'))),
     ]))),
   ]));
 }
