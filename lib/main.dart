@@ -164,7 +164,15 @@ class _FitCalcHubAppState extends State<FitCalcHubApp> {
     themeMode: dark ? ThemeMode.dark : ThemeMode.light,
     theme: _theme(Brightness.light),
     darkTheme: _theme(Brightness.dark),
-    home: AppLanguage(language: language, onChanged: setLanguage, child: Directionality(textDirection: language == 'ar' ? TextDirection.rtl : TextDirection.ltr, child: MainShell(prefs: widget.prefs, dark: dark, onDark: setDark))),
+    home: MainShell(prefs: widget.prefs, dark: dark, onDark: setDark),
+    builder: (context, child) => AppLanguage(
+      language: language,
+      onChanged: setLanguage,
+      child: Directionality(
+        textDirection: language == 'ar' ? TextDirection.rtl : TextDirection.ltr,
+        child: child ?? const SizedBox.shrink(),
+      ),
+    ),
   );
 }
 
