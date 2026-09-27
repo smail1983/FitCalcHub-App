@@ -845,8 +845,7 @@ class _CalcPageState extends State<CalcPage> {
 
     try {
       final age = n('age');
-      final weightLb = n('weight');
-      final heightIn = n('height');
+      final age = n('age');
       final weightKg = n('weightKg');
       final heightCm = n('heightCm');
 
@@ -866,18 +865,9 @@ class _CalcPageState extends State<CalcPage> {
                       : 'Obesity';
           r = '${bmi.toStringAsFixed(1)} — $cat';
         }
-      } else if (widget.calc == Calc.bmr) {
-        if (age < 18 || weightLb <= 0 || heightIn <= 0) {
-          r = 'Please enter a valid adult age, weight and height.';
-        } else {
-          final kg = weightLb * 0.45359237;
-          final cm = heightIn * 2.54;
-          final bmr = sex == 'male'
-              ? 10 * kg + 6.25 * cm - 5 * age + 5
-              : 10 * kg + 6.25 * cm - 5 * age - 161;
-          r = '${bmr.round()} kcal/day estimated BMR';
-        }
-      } else if (widget.calc == Calc.tdee || widget.calc == Calc.deficit) {
+      } else if (widget.calc == Calc.bmr ||
+          widget.calc == Calc.tdee ||
+          widget.calc == Calc.deficit) {
         if (age < 18 || weightKg <= 0 || heightCm <= 0) {
           r = 'Please enter a valid adult age, weight and height.';
         } else {
@@ -887,7 +877,9 @@ class _CalcPageState extends State<CalcPage> {
           final multiplier = double.tryParse(activity) ?? 1.2;
           final tdee = bmr * multiplier;
 
-          if (widget.calc == Calc.tdee) {
+          if (widget.calc == Calc.bmr) {
+            r = '${bmr.round()} kcal/day estimated BMR';
+          } else if (widget.calc == Calc.tdee) {
             r = '${tdee.round()} kcal/day estimated TDEE';
           } else {
             final low = math.max(1200, (tdee - 500).round());
@@ -903,10 +895,7 @@ class _CalcPageState extends State<CalcPage> {
         final hip = n('hip');
         final female = sex == 'female';
 
-        if (hh <= 0 ||
-            neck <= 0 ||
-            waist <= 0 ||
-            (female && hip <= 0)) {
+        if (hh <= 0 || neck <= 0 || waist <= 0 || (female && hip <= 0)) {
           r = 'Please enter valid measurements.';
         } else {
           final x = female ? waist + hip - neck : waist - neck;
@@ -939,8 +928,8 @@ class _CalcPageState extends State<CalcPage> {
 
   @override Widget build(BuildContext context) {
     final labels=switch(widget.calc){
-      Calc.bmi=>['weightKg','heightCm'], Calc.bmr=>['age','weight','height'], Calc.tdee=>['age','weightKg','heightCm'],
-      Calc.deficit=>['age','weightKg','heightCm'], Calc.bodyFat=>['heightCm','neck','waist','hip'], Calc.meal=>[]
+      Calc.bmi=>['weightKg','heightCm'], Calc.bmr=>['age','weightKg','heightCm'], Calc.tdee=>['age','weightKg','heightCm'],
+      Calc.deficit=>['age','weightKg','heightCm'], Calc.bodyFat=>sex == 'female' ? ['heightCm','neck','waist','hip'] : ['heightCm','neck','waist'], Calc.meal=>[]
     };
     return Scaffold(
       appBar: AppBar(title: Text(calcNameLocalized(context, widget.calc))),
@@ -985,7 +974,12 @@ class _CalcPageState extends State<CalcPage> {
 
   Widget _field(String k) {
     const units={'weight':'Weight (lb)','height':'Height (in)','weightKg':'Weight (kg)','heightCm':'Height (cm)','age':'Age','neck':'Neck (cm)','waist':'Waist (cm)','hip':'Hip (cm)'};
-    return TextField(controller:c[k],keyboardType:const TextInputType.numberWithOptions(decimal:true),decoration:InputDecoration(labelText:units[k]));
+    return TextField(
+      controller:c[k],
+      keyboardType:const TextInputType.numberWithOptions(decimal:true),
+      textInputAction:TextInputAction.next,
+      decoration:InputDecoration(labelText:units[k]),
+    );
   }
 }
 
