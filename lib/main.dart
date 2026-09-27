@@ -845,7 +845,6 @@ class _CalcPageState extends State<CalcPage> {
 
     try {
       final age = n('age');
-      final age = n('age');
       final weightKg = n('weightKg');
       final heightCm = n('heightCm');
 
