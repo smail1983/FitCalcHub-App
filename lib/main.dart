@@ -841,23 +841,98 @@ class _CalcPageState extends State<CalcPage> {
   }
 
   void calculate() {
-    final age=n('age'), w=n('weight'), h=n('height'), bmiWeight=n('weightKg'), bmiHeight=n('heightCm');
-    String r='';
-    if(widget.calc==Calc.bmi){
-      if(bmiWeight<=0||bmiHeight<=0) r='Please enter valid weight and height.';
-      else { final bmi=bmiWeight/((bmiHeight/100)*(bmiHeight/100)); final cat=bmi<18.5?'Underweight':bmi<25?'Normal range':bmi<30?'Overweight':'Obesity'; r='${bmi.toStringAsFixed(1)} — $cat'; }
-    } else if(widget.calc==Calc.bmr||widget.calc==Calc.tdee||widget.calc==Calc.deficit){
-      if(age<18||w<=0||h<=0) r='Please enter valid adult age, weight and height.';
-      else { final kg=widget.calc==Calc.bmr?w/2.20462:bmiWeight, cm=widget.calc==Calc.bmr?h*2.54:bmiHeight, bmr=sex=='male'?10*kg+6.25*cm-5*age+5:10*kg+6.25*cm-5*age-161;
-        if(widget.calc==Calc.bmr) r='${bmr.round()} kcal/day estimated BMR';
-        else { final t=bmr*double.parse(activity); if(widget.calc==Calc.tdee) r='${t.round()} kcal/day estimated TDEE'; else { final low=(t-500).round()<1200?1200:(t-500).round(), high=(t-300).round()<1200?1200:(t-300).round(); r='Maintenance: ${t.round()} kcal/day\nExample deficit range: $low–$high kcal/day'; } }
+    FocusScope.of(context).unfocus();
+
+    try {
+      final age = n('age');
+      final weightLb = n('weight');
+      final heightIn = n('height');
+      final weightKg = n('weightKg');
+      final heightCm = n('heightCm');
+
+      String r = '';
+
+      if (widget.calc == Calc.bmi) {
+        if (weightKg <= 0 || heightCm <= 0) {
+          r = 'Please enter a valid weight and height.';
+        } else {
+          final bmi = weightKg / math.pow(heightCm / 100, 2);
+          final cat = bmi < 18.5
+              ? 'Underweight'
+              : bmi < 25
+                  ? 'Normal range'
+                  : bmi < 30
+                      ? 'Overweight'
+                      : 'Obesity';
+          r = '${bmi.toStringAsFixed(1)} — $cat';
+        }
+      } else if (widget.calc == Calc.bmr) {
+        if (age < 18 || weightLb <= 0 || heightIn <= 0) {
+          r = 'Please enter a valid adult age, weight and height.';
+        } else {
+          final kg = weightLb * 0.45359237;
+          final cm = heightIn * 2.54;
+          final bmr = sex == 'male'
+              ? 10 * kg + 6.25 * cm - 5 * age + 5
+              : 10 * kg + 6.25 * cm - 5 * age - 161;
+          r = '${bmr.round()} kcal/day estimated BMR';
+        }
+      } else if (widget.calc == Calc.tdee || widget.calc == Calc.deficit) {
+        if (age < 18 || weightKg <= 0 || heightCm <= 0) {
+          r = 'Please enter a valid adult age, weight and height.';
+        } else {
+          final bmr = sex == 'male'
+              ? 10 * weightKg + 6.25 * heightCm - 5 * age + 5
+              : 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
+          final multiplier = double.tryParse(activity) ?? 1.2;
+          final tdee = bmr * multiplier;
+
+          if (widget.calc == Calc.tdee) {
+            r = '${tdee.round()} kcal/day estimated TDEE';
+          } else {
+            final low = math.max(1200, (tdee - 500).round());
+            final high = math.max(1200, (tdee - 300).round());
+            r = 'Maintenance: ${tdee.round()} kcal/day\n'
+                'Example deficit range: $low–$high kcal/day';
+          }
+        }
+      } else if (widget.calc == Calc.bodyFat) {
+        final hh = n('heightCm');
+        final neck = n('neck');
+        final waist = n('waist');
+        final hip = n('hip');
+        final female = sex == 'female';
+
+        if (hh <= 0 ||
+            neck <= 0 ||
+            waist <= 0 ||
+            (female && hip <= 0)) {
+          r = 'Please enter valid measurements.';
+        } else {
+          final x = female ? waist + hip - neck : waist - neck;
+          if (x <= 0) {
+            r = 'Please check your measurements.';
+          } else {
+            final bf = female
+                ? 495 /
+                        (1.29579 -
+                            0.35004 * log10(x) +
+                            0.221 * log10(hh)) -
+                    450
+                : 495 /
+                        (1.0324 -
+                            0.19077 * log10(x) +
+                            0.15456 * log10(hh)) -
+                    450;
+            r = '${bf.toStringAsFixed(1)}% estimated body fat';
+          }
+        }
       }
-    } else if(widget.calc==Calc.bodyFat){
-      final hh=n('heightCm'), neck=n('neck'), waist=n('waist'), hip=n('hip'), female=sex=='female';
-      if(hh<=0||neck<=0||waist<=0||(female&&hip<=0)) r='Please enter valid measurements.';
-      else { final x=female?waist+hip-neck:waist-neck; if(x<=0) r='Please check your measurements.'; else { final bf=female?495/(1.29579-0.35004*log10(x)+0.221*log10(hh))-450:495/(1.0324-0.19077*log10(x)+0.15456*log10(hh))-450; r='${bf.toStringAsFixed(1)}% estimated body fat'; } }
+
+      setState(() => result = r.isEmpty ? 'Unable to calculate this result.' : r);
+    } catch (_) {
+      setState(() => result = 'Please check the values and try again.');
     }
-    setState(()=>result=r);
   }
 
   double log10(double x) => math.log(x) / math.ln10;
